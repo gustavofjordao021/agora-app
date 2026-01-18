@@ -23,6 +23,19 @@ A web-based nutrition tracking application that clones the core functionality of
 - **Default units**: Imperial (oz, cups, lbs) with option to switch to metric
 - **UI philosophy**: Simple, clean, minimal - no fancy animations or decorations
 
+### Design Reference (Kissaten-style)
+Inspired by the Kissaten coffee app aesthetic:
+- **Background**: Light gray (`#f5f5f5` or `bg-gray-50`) not pure white
+- **Typography hierarchy**: Bold black for active/primary, light gray for secondary/inactive
+- **Bottom nav**: Floating pill shape with outline icons (home, favorites, log)
+- **Grid layouts**: 2-column grid for food items/search results
+- **Lists**: Timestamp/label left-aligned, content below with generous spacing
+- **Step flows**: Active step bold, upcoming steps faded gray
+- **Icons**: Outline style only, no filled icons
+- **Borders**: Avoid visible borders, use whitespace for separation
+- **Shadows**: Minimal to none, rely on background contrast
+- **Spacing**: Generous padding and margins throughout
+
 ---
 
 ## Feature Breakdown
