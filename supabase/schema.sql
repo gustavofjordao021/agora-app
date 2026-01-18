@@ -20,7 +20,7 @@ CREATE TABLE user_profiles (
 
   -- Preferences
   default_meal_type VARCHAR(20) DEFAULT 'snack' CHECK (default_meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
-  use_metric BOOLEAN DEFAULT TRUE,
+  use_metric BOOLEAN DEFAULT FALSE, -- Default to imperial (oz, cups, lbs)
 
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

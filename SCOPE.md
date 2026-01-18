@@ -16,6 +16,12 @@ A web-based nutrition tracking application that clones the core functionality of
 - **Charts**: Recharts (shadcn/ui charts)
 - **Forms**: React Hook Form + Zod validation
 - **Barcode**: @zxing/browser for barcode detection
+- **Deployment**: Vercel
+
+### Design Principles
+- **Color scheme**: Black and white only (monochrome)
+- **Default units**: Imperial (oz, cups, lbs) with option to switch to metric
+- **UI philosophy**: Simple, clean, minimal - no fancy animations or decorations
 
 ---
 
