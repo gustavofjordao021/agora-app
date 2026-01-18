@@ -6,12 +6,16 @@ A web-based nutrition tracking application that clones the core functionality of
 
 ### Tech Stack
 - **Frontend**: Next.js 14+ (App Router), React 18, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI primitives + Tailwind)
 - **Backend**: Next.js API Routes (Route Handlers)
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth (email/password)
 - **AI/ML**: Google Gemini Flash (image recognition, OCR, food estimation)
 - **External APIs**: Open Food Facts (barcode lookup), USDA FoodData Central (nutrition data)
 - **Image Processing**: Browser MediaDevices API for camera access
+- **Charts**: Recharts (shadcn/ui charts)
+- **Forms**: React Hook Form + Zod validation
+- **Barcode**: @zxing/browser for barcode detection
 
 ---
 
@@ -645,6 +649,240 @@ The app will be fully responsive with:
 - Sidebar navigation for desktop
 - Touch-friendly controls for scanning features
 - PWA capabilities for app-like experience
+
+---
+
+## Shadcn/UI Component Mapping
+
+### Required Shadcn Components to Install
+
+```bash
+npx shadcn@latest init
+npx shadcn@latest add button card input label form dialog sheet
+npx shadcn@latest add dropdown-menu avatar tabs progress badge
+npx shadcn@latest add select slider separator skeleton toast
+npx shadcn@latest add command popover calendar collapsible
+npx shadcn@latest add alert-dialog scroll-area table chart
+```
+
+### Component-to-Feature Mapping
+
+| Feature | Shadcn Components Used |
+|---------|------------------------|
+| **Auth Forms** | `Card`, `Form`, `Input`, `Label`, `Button` |
+| **Food Search** | `Command` (cmdk), `Popover`, `Input`, `Skeleton` |
+| **Food Cards** | `Card`, `Badge`, `Button`, `Separator` |
+| **Nutrition Display** | `Card`, `Progress`, `Separator`, `Table` |
+| **Portion Picker** | `Select`, `Slider`, `Input`, `Popover` |
+| **Meal Sections** | `Collapsible`, `Card`, `Button`, `Badge` |
+| **Log Entry** | `Card`, `Button`, `DropdownMenu`, `AlertDialog` |
+| **Quick Add FAB** | `Button`, `Sheet`, `Command` |
+| **Daily Progress** | `Progress`, `Card`, `Chart` (radial) |
+| **Macro Bars** | `Progress`, `Badge`, `Card` |
+| **Weekly Chart** | `Chart` (bar/line), `Card`, `Tabs` |
+| **Goals Editor** | `Form`, `Input`, `Slider`, `Select`, `Card` |
+| **Date Picker** | `Calendar`, `Popover`, `Button` |
+| **Scanner Overlay** | `Dialog`, `Button`, `Card` |
+| **AI Results** | `Card`, `Skeleton`, `Badge`, `Table`, `Button` |
+| **Settings** | `Card`, `Switch`, `Select`, `Separator` |
+| **Bottom Nav** | `Button`, custom styling |
+| **Toasts/Alerts** | `Toast`, `AlertDialog` |
+
+### Custom Components Built on Shadcn
+
+```
+/components
+├── /ui                          # Shadcn primitives (auto-generated)
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── command.tsx
+│   ├── dialog.tsx
+│   ├── form.tsx
+│   ├── input.tsx
+│   ├── progress.tsx
+│   ├── select.tsx
+│   ├── sheet.tsx
+│   ├── skeleton.tsx
+│   ├── slider.tsx
+│   ├── tabs.tsx
+│   ├── toast.tsx
+│   └── ...
+│
+├── /food                        # Food-specific components
+│   ├── FoodCard.tsx             # Card + Badge + Progress
+│   ├── FoodSearchCommand.tsx    # Command + Popover (combobox pattern)
+│   ├── NutritionLabel.tsx       # Card + Table + Progress bars
+│   ├── PortionPicker.tsx        # Select + Slider + Input
+│   └── MacroRing.tsx            # Custom SVG ring using Chart colors
+│
+├── /scanner                     # Camera components
+│   ├── CameraView.tsx           # Custom (canvas + video)
+│   ├── BarcodeScanner.tsx       # Dialog + CameraView + Card
+│   ├── MealPhotoCapture.tsx     # Sheet + CameraView + Button
+│   └── LabelScanner.tsx         # Dialog + CameraView + Form
+│
+├── /log                         # Logging components
+│   ├── DailyLogView.tsx         # Card + Collapsible + ScrollArea
+│   ├── MealSection.tsx          # Collapsible + Badge + Button
+│   ├── LogEntryCard.tsx         # Card + DropdownMenu + AlertDialog
+│   ├── QuickAddSheet.tsx        # Sheet + Command + Form
+│   └── DateNavigator.tsx        # Button + Calendar + Popover
+│
+├── /progress                    # Stats & visualization
+│   ├── CalorieRingChart.tsx     # Chart (radial) + Card
+│   ├── MacroProgressBars.tsx    # Progress + Badge
+│   ├── WeeklyBarChart.tsx       # Chart (bar) + Tabs
+│   └── NutrientSummary.tsx      # Card + Table + Progress
+│
+├── /goals                       # Goal management
+│   ├── GoalSetupWizard.tsx      # Dialog + Form + Slider + Select
+│   ├── GoalCard.tsx             # Card + Progress + Button
+│   └── MacroGoalSliders.tsx     # Slider + Label + Input
+│
+└── /layout                      # App shell
+    ├── AppHeader.tsx            # Avatar + DropdownMenu + Button
+    ├── BottomNav.tsx            # Custom nav with Button styling
+    ├── Sidebar.tsx              # Sheet (mobile) + nav links
+    └── PageContainer.tsx        # ScrollArea + consistent padding
+```
+
+### Key UI Patterns
+
+**1. Food Search (Combobox Pattern)**
+```tsx
+// Uses Command + Popover for searchable food list
+<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outline">Search foods...</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <Command>
+      <CommandInput placeholder="Search..." />
+      <CommandList>
+        <CommandEmpty>No foods found</CommandEmpty>
+        <CommandGroup heading="Recent">
+          <CommandItem>Chicken Breast</CommandItem>
+        </CommandGroup>
+        <CommandGroup heading="Results">
+          {searchResults.map(food => (
+            <CommandItem key={food.id}>{food.name}</CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  </PopoverContent>
+</Popover>
+```
+
+**2. Meal Section (Collapsible Pattern)**
+```tsx
+<Collapsible defaultOpen>
+  <CollapsibleTrigger asChild>
+    <Button variant="ghost" className="w-full justify-between">
+      <span>Breakfast</span>
+      <Badge>{mealCalories} cal</Badge>
+    </Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent>
+    {entries.map(entry => <LogEntryCard key={entry.id} {...entry} />)}
+    <Button variant="outline" size="sm">+ Add Food</Button>
+  </CollapsibleContent>
+</Collapsible>
+```
+
+**3. Quick Add (Sheet Pattern)**
+```tsx
+<Sheet>
+  <SheetTrigger asChild>
+    <Button size="lg" className="fixed bottom-20 right-4 rounded-full">
+      +
+    </Button>
+  </SheetTrigger>
+  <SheetContent side="bottom" className="h-[80vh]">
+    <SheetHeader>
+      <SheetTitle>Add Food</SheetTitle>
+    </SheetHeader>
+    <Tabs defaultValue="search">
+      <TabsList>
+        <TabsTrigger value="search">Search</TabsTrigger>
+        <TabsTrigger value="scan">Scan</TabsTrigger>
+        <TabsTrigger value="photo">Photo</TabsTrigger>
+      </TabsList>
+      <TabsContent value="search">
+        <FoodSearchCommand onSelect={handleAddFood} />
+      </TabsContent>
+      <TabsContent value="scan">
+        <BarcodeScanner onScan={handleBarcode} />
+      </TabsContent>
+      <TabsContent value="photo">
+        <MealPhotoCapture onCapture={handlePhoto} />
+      </TabsContent>
+    </Tabs>
+  </SheetContent>
+</Sheet>
+```
+
+**4. Daily Progress (Radial Chart)**
+```tsx
+<Card>
+  <CardContent className="flex items-center gap-4">
+    <ChartContainer config={chartConfig}>
+      <RadialBarChart data={[{ calories: consumed, fill: "var(--chart-1)" }]}>
+        <RadialBar dataKey="calories" background />
+        <PolarRadiusAxis tick={false} domain={[0, goal]} />
+      </RadialBarChart>
+    </ChartContainer>
+    <div>
+      <p className="text-2xl font-bold">{consumed}</p>
+      <p className="text-muted-foreground">of {goal} cal</p>
+    </div>
+  </CardContent>
+</Card>
+```
+
+---
+
+## Implementation Phases
+
+### Phase 1: Foundation
+- Next.js project setup with TypeScript
+- Shadcn/ui installation and theme configuration
+- Supabase project + schema deployment
+- Auth flow (signup, login, logout)
+- Basic layout (header, bottom nav, page containers)
+
+### Phase 2: Core Food Features
+- Food database tables + seed data
+- Food search with Command component
+- Add custom food form
+- Nutrition display components
+
+### Phase 3: Logging System
+- Daily log view with meal sections
+- Add food to meal flow
+- Portion picker with serving sizes
+- Edit/delete log entries
+- Date navigation
+
+### Phase 4: Scanner Features
+- Camera access component
+- Barcode scanner with @zxing/browser
+- Open Food Facts API integration
+- Photo meal capture
+- Gemini Flash integration for food analysis
+- Nutrition label OCR
+
+### Phase 5: Goals & Stats
+- Goal setup/edit forms
+- Daily progress display
+- Macro breakdown visualization
+- Weekly/monthly charts
+
+### Phase 6: Polish
+- Loading states with Skeleton
+- Error handling with Toast
+- Responsive design refinement
+- PWA manifest + icons
 
 ---
 
